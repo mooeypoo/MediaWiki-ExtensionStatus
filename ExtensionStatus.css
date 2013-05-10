@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.extstatus-warning {
+	font-weight: bold;
+	color: red;
+}
