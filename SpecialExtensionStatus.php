@@ -110,14 +110,6 @@ class SpecialExtensionStatus extends SpecialVersion {
 				$gitHeadCommitDate = $gitInfo->getHeadCommitDate();
 				if ( $gitHeadCommitDate ) {
 					$vcsText .= "<br/>" . $wgLang->timeanddate( $gitHeadCommitDate, true );
-
-					/* Adding date/change comparison */
-					$diff = $this->getChangeStatus( $name );
-					if ($diff !== false) {
-						$msg = wfMessage( 'extensionstatus-behindcommits', $this->intervalToText( $diff ) )->parse();
-						$extStatText = "<p class='extstatus-warning'>".$msg."</p>";
-					}
-						
 				}
 			} else {
 				$svnInfo = self::getSvnInfo( dirname( $extension['path'] ) );
@@ -128,13 +120,22 @@ class SpecialExtensionStatus extends SpecialVersion {
 					$vcsText = isset( $svnInfo['viewvc-url'] ) ? '[' . $svnInfo['viewvc-url'] . " $vcsText]" : $vcsText;
 				}
 			}
+						
 		}
-	
+		
+		/* Adding date/change comparison */
+		$diff = $this->getChangeStatus( $name );
+		$extStatText = "";
+		if ($diff !== false) {
+			$msg = wfMessage( 'extensionstatus-behindcommits', $this->intervalToText( $diff ) )->parse();
+			$extStatText = "<p class='extstatus-warning'>".$msg."</p>";
+		}
+		
 		# Make main link (or just the name if there is no URL).
 		if ( isset( $extension['url'] ) ) {
-		$mainLink = "[{$extension['url']} $name]";
+			$mainLink = "[{$extension['url']} $name]";
 		} else {
-		$mainLink = $name;
+			$mainLink = $name;
 		}
 	
 		if ( isset( $extension['version'] ) ) {
@@ -172,7 +173,8 @@ class SpecialExtensionStatus extends SpecialVersion {
 			
 		} else {
 			$extNameVer = "<tr>
-			<td colspan=\"2\"><em>$mainLink $versionText</em></td>";
+			<td><em>$mainLink $versionText</em></td>
+			<td> $extStatText </td>";
 		}
 	
 		$author = isset( $extension['author'] ) ? $extension['author'] : array();
