@@ -7,9 +7,9 @@ class SpecialExtensionStatus extends SpecialVersion {
 	protected $dateTimeFormat = "";
 	
 	public function __construct() {
-		// Call the SpecialPage constructor
-//		$this->reader = new XMLReader();
 		$this->dateTimeFormat = "F d Y H:i:s.";
+
+		// Call the SpecialPage constructor
 		SpecialPage::__construct( 'ExtensionStatus' );
 	}
 
@@ -19,13 +19,20 @@ class SpecialExtensionStatus extends SpecialVersion {
 		$this->setHeaders();
 
 		$output->prependHTML( wfMessage( 'extensionstatus-extendversionlink' )->parse() );
+
 		$wikitext = $this->getExtensionCredits();
 		$output->addWikiText( $wikitext );
 	}
 
 	
 	
-
+	/**
+	 * Get the date and time of the latest commit in the Gerrit repo and compare it to the 
+	 * time and date the local files have been changed. Use this to assume the versions are
+	 * behind and require update.
+	 * 
+	 * @return {int} Time difference between the two versions
+	 */
 	function getChangeStatus( $extName ) {
 		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=commit;h=refs/heads/master";
 		$extLocalPath = dirname( dirname(  __FILE__ ) ) . "/" . $extName . "/" . $extName . ".php";
@@ -48,10 +55,20 @@ class SpecialExtensionStatus extends SpecialVersion {
 		return $diff;
 	}
 
+	/**
+	 * Calculate the difference between two given dates in miliseconds
+	 * 
+	 * @return difference in miliseconds
+	 */
 	function calcDiff( $newDate, $oldDate ) {
 		return ( $newDate - $oldDate );
 	}
 	
+	/** 
+	 * Transform a time interval into text.
+	 *
+	 * @return {string} A text representation of the difference between two dates
+	 */
 	function intervalToText( $timeInterval ) {
 		$days = floor($timeInterval/(60*60*24));
 		$hours = floor(($timeInterval - $days*(60*60*24)) / (60*60));
@@ -65,6 +82,9 @@ class SpecialExtensionStatus extends SpecialVersion {
 	
 	
 	/**
+	 * This is an original function from SpecialVersion page. It is edited slightly
+	 * to add the version differences notice.
+	 * 
 	 * Creates and formats the credits for a single extension and returns this.
 	 *
 	 * @param $extension Array
@@ -91,7 +111,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 				if ( $gitHeadCommitDate ) {
 					$vcsText .= "<br/>" . $wgLang->timeanddate( $gitHeadCommitDate, true );
 
-					/* Adding comparison to local version */
+					/* Adding date/change comparison */
 					$diff = $this->getChangeStatus( $name );
 					if ($diff !== false) {
 						$msg = wfMessage( 'extensionstatus-behindcommits', $this->intervalToText( $diff ) )->parse();
@@ -170,7 +190,11 @@ class SpecialExtensionStatus extends SpecialVersion {
 	
 	
 	
-	/** Including 'private' functions for inheritance **/
+	/** 
+	 * Including private function here to preserve
+	 * the inheritance. 
+	 **/
+	 
 	private function openExtType( $text, $name = null ) {
 		$opt = array( 'colspan' => 4 );
 		$out = '';

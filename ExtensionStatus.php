@@ -25,10 +25,10 @@ $wgResourceModules['ext.ExtensionStatus'] = array(
 );
 
 
-$wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php'; # Location of the SpecialMyExtension class (Tell MediaWiki to load this file)
-$wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php'; # Location of a messages file (Tell MediaWiki to load this file)
-$wgExtensionMessagesFiles[ 'ExtensionStatusAlias' ] = __DIR__ . '/ExtensionStatus.alias.php'; # Location of an aliases file (Tell MediaWiki to load this file)
-$wgSpecialPages[ 'ExtensionStatus' ] = 'SpecialExtensionStatus'; # Tell MediaWiki about the new special page and its class name
+$wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php'; 
+$wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php'; 
+$wgExtensionMessagesFiles[ 'ExtensionStatusAlias' ] = __DIR__ . '/ExtensionStatus.alias.php'; 
+$wgSpecialPages[ 'ExtensionStatus' ] = 'SpecialExtensionStatus'; 
 
 /**
  * @param $out OutputPage

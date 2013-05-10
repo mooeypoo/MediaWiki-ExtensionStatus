@@ -12,9 +12,12 @@ This extension is installed the usual way:
 
 * Download the [latest version](https://github.com/mooeypoo/MediaWiki-ExtensionStatus/archive/master.zip) into your mediawiki/extensions/ folder, call the new folder "ExtensionStatus".
 * Add this to your LocalSettings.php
+
+
 ```
 require_once( "$IP/extensions/ExtensionStatus/ExtensionStatus.php" );
 ```
+
 
 Please report bugs and suggestions in the issues!
 
