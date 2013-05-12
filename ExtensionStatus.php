@@ -14,7 +14,6 @@ $wgExtensionCredits[ 'specialpage' ][] = array(
         'path' => __FILE__,
         'name' => 'ExtensionStatus',
         'author' => 'Moriel Schottlender',
-//        'url' => 'https://www.mediawiki.org/wiki/Extension:ExtensionStatus',
         'descriptionmsg' => 'extensionstatus-desc',
         'version' => '0.1.0',
 );

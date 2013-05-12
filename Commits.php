@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 
 class seCommits {
 	
@@ -23,7 +22,6 @@ class seCommits {
 		$DOM = new DOMDocument;
 		$DOM->loadHTML( $output);
 		
-//		$this->doc = $DOM;
 		return $DOM;
 	}
 	
@@ -37,11 +35,11 @@ class seCommits {
 		$commits = array();
 		$counter=0;
 		$stop=false;
-//		while ($counter < 10 && $cont) { //get only the latest 10 commits
+
 		foreach($links as $link) {
-			//$link = $links->item($counter);
+
 			$stop = false;
-			if ($link->nodeValue == 'commit') {
+			if ( $link->nodeValue == 'commit' ) {
 				$commits[$counter]['link'] = "https://gerrit.wikimedia.org" . $link->getAttribute('href');
 				// get info from that commit:
 				$newDom = new DOMDocument;

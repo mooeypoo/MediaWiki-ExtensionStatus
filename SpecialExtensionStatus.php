@@ -111,7 +111,6 @@ class SpecialExtensionStatus extends SpecialVersion {
 				$gitHeadCommitDate = $gitInfo->getHeadCommitDate();
 				if ( $gitHeadCommitDate ) {
 					$vcsText .= "<br/>" . $wgLang->timeanddate( $gitHeadCommitDate, true );
-//					$diff = $this->getChangeStatus( $name, true, $gitHeadCommitDate );
 					$localTime = $gitHeadCommitDate ;
 				}
 			} else {
