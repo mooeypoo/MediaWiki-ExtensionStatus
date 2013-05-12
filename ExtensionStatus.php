@@ -25,7 +25,9 @@ $wgResourceModules['ext.ExtensionStatus'] = array(
 );
 
 
+$wgAutoloadClasses[ 'seCommits' ] = __DIR__ . '/Commits.php'; 
 $wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php'; 
+
 $wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php'; 
 $wgExtensionMessagesFiles[ 'ExtensionStatusAlias' ] = __DIR__ . '/ExtensionStatus.alias.php'; 
 $wgSpecialPages[ 'ExtensionStatus' ] = 'SpecialExtensionStatus'; 

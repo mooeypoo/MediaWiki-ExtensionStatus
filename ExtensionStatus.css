@@ -1,10 +1,10 @@
 @CHARSET "UTF-8";
 
-.extstatus-warning {
+.extstatus-notice {
 	font-weight: bold;
 	color: red;
 }
 
-.extstatus-lastcommit {
-	color: red;
+.extstatus-commit-info {
+	color: blue;
 }

@@ -6,10 +6,12 @@ class SpecialExtensionStatus extends SpecialVersion {
 	protected $reader = null;
 	protected $dateTimeFormat = "";
 	protected $lastRemoteChange = 0;
+	protected $comm;
 	
 	public function __construct() {
 		$this->dateTimeFormat = "F d Y H:i:s.";
-
+		$this->comm = new seCommits();
+		
 		// Call the SpecialPage constructor
 		SpecialPage::__construct( 'ExtensionStatus' );
 	}
@@ -35,7 +37,10 @@ class SpecialExtensionStatus extends SpecialVersion {
 	 * @return {int} Time difference between the two versions
 	 */
 	function getChangeStatus( $extName , $getFromLocalGit = false, $localGitTime = 0 ) {
-		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=commit;h=refs/heads/master";
+		global $wgLang;
+		
+		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=shortlog;h=refs/heads/master;hb=master";
+
 		$extLocalPath = dirname( dirname(  __FILE__ ) ) . "/" . $extName . "/" . $extName . ".php";
 		
 		if ( $getFromLocalGit && $localGitTime > 0 ) {
@@ -45,47 +50,37 @@ class SpecialExtensionStatus extends SpecialVersion {
 			$localChangeTime = filemtime( $extLocalPath );
 		}
 		// Check remote last change:
-		$content = file_get_contents($extGitURL);
-		$this->lastRemoteChange = 0;
-		if ( $content !== false ) {
-			// Look for the last commit date
-			preg_match_all('%<span class=\"datetime\">(.*?)</span>%i', $content, $matches, PREG_PATTERN_ORDER);
-			$remoteChangeTime = strtotime( $matches[1][0] );
-			$this->lastRemoteChange = $remoteChangeTime;
+		$this->comm->setLocalChangeTime( $localChangeTime );
+		$cDom = $this->comm->readRemoteURL( $extGitURL );
+		$extStatText = "";
+		if ($cDom) {
+			// Get the commit list:
+			$commits = $this->comm->getCommits( $cDom, $localChangeTime );
+			// Prepare the message
+			if ( count( $commits ) > 0 ) {
+				if ( $commits[0]["date"] > $localChangeTime ) {
+					if ($this->comm->getCommitCounter() > 10) {
+						$statnotice = wfMessage( 'extstat-msg-lastchange-toomanynotice', 10, $extGitURL )->text();
+					} else {
+						$statnotice = wfMessage( 'extstat-msg-lastchange-notice',
+							$this->comm->getCommitCounter(), $extGitURL )->text();
+					}
+
+					// details of latest commit:
+					$commitinfo = wfMessage( 'extstat-msg-lastchange-details',
+							$commits[0]['header'], $commits[0]['author'], $wgLang->timeanddate( $commits[0]['date'], true ) )->text();
+
+					//display nicely:
+					$extStatText .= "<p class='extstatus-notice'>".$statnotice."</p>";
+					$extStatText .= "<p class='extstatus-commit-info'>".$commitinfo."</p>";
+				}
+			}
 			
-			$diff = $remoteChangeTime - $localChangeTime;
-		} else {
-			$diff = false;
-			// Erorr reading remote file
 		}
-		return $diff;
+		return $extStatText;
+
 	}
 
-	/**
-	 * Calculate the difference between two given dates in miliseconds
-	 * 
-	 * @return difference in miliseconds
-	 */
-	function calcDiff( $newDate, $oldDate ) {
-		return ( $newDate - $oldDate );
-	}
-	
-	/** 
-	 * Transform a time interval into text.
-	 *
-	 * @return {string} A text representation of the difference between two dates
-	 */
-	function intervalToText( $timeInterval ) {
-		$days = floor($timeInterval/(60*60*24));
-		$hours = floor(($timeInterval - $days*(60*60*24)) / (60*60));
-		
-		$result = $days . " Days";
-		if ($hours > 0) {
-			$result .= ", " . $hours ." Hours";
-		}
-		return $result;
-	}
-	
 	
 	/**
 	 * This is an original function from SpecialVersion page. It is edited slightly
@@ -116,7 +111,8 @@ class SpecialExtensionStatus extends SpecialVersion {
 				$gitHeadCommitDate = $gitInfo->getHeadCommitDate();
 				if ( $gitHeadCommitDate ) {
 					$vcsText .= "<br/>" . $wgLang->timeanddate( $gitHeadCommitDate, true );
-					$diff = $this->getChangeStatus( $name, true, $gitHeadCommitDate );
+//					$diff = $this->getChangeStatus( $name, true, $gitHeadCommitDate );
+					$localTime = $gitHeadCommitDate ;
 				}
 			} else {
 				$svnInfo = self::getSvnInfo( dirname( $extension['path'] ) );
@@ -131,18 +127,10 @@ class SpecialExtensionStatus extends SpecialVersion {
 		}
 		
 		/* Adding date/change comparison */
-		$extStatText = "";
-		if ($diff <= 0) {
-			$diff = $this->getChangeStatus( $name );
-		}
-		if ($diff !== false) {
-			$textmsg = "";
-			if ($this->lastRemoteChange > 0) {
-				$textmsg .= wfMessage( 'extensionstatus-latestcommit', date( $this->dateTimeFormat, $this->lastRemoteChange ) )->parse();
-				$extStatText .= "<p class='extstatus-lastcommit'>".$textmsg."</p>";
-			}
-			$textmsg = wfMessage( 'extensionstatus-behindcommits', $this->intervalToText( $diff ) )->parse();
-			$extStatText .= "<p class='extstatus-warning'>".$textmsg."</p>";
+		if (isset($gitHeadCommitDate)) {
+			$extStatText = $this->getChangeStatus( $name, true, $gitHeadCommitDate );
+		} else {
+			$extStatText = $this->getChangeStatus( $name, false );
 		}
 		
 		# Make main link (or just the name if there is no URL).
@@ -157,7 +145,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 				$this->msg( 'version-version', $extension['version'] )->text() .
 							'</span>';
 		} else {
-		$versionText = '';
+			$versionText = '';
 		}
 	
 		# Make description text.
