@@ -8,7 +8,10 @@ This isn't entirely accurate, but it can give users (and developers) some idea o
 
 ## Note
 
-This is my very first MediaWiki extension, and I am pretty sure what I've done can be done better without the use of regular expressions to screenscrape the git repository off of gerrit. If you have suggestions or comments, please add them to the GitHub issues. You can also contact me through the site, or on IRC (irc.freenode.net) as _mooeypoo_
+*This is my very first MediaWiki extension!* (woohoo), and I am pretty sure what I've done can be done better. I took great care to try and follow the conventions, but please bear with me on errors and fixes, and if you find any, please add them to the GitHub issues -- I'd love to have good criticism that can make this extension useful to people! 
+
+You can also contact me through moo[at]smarterthanthat[dot]com, or on IRC (irc.freenode.net) as _mooeypoo_
+
 
 ## Installation
 
@@ -25,7 +28,9 @@ require_once( "$IP/extensions/ExtensionStatus/ExtensionStatus.php" );
 
 After installation, browse to Special:ExtensionStatus page:
 
-```yourmediawiki.com/Special:ExtensionStatus```
+```
+http://yourmediawiki.com/Special:ExtensionStatus
+```
 
 Please report bugs and suggestions in the issues!
 
