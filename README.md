@@ -41,7 +41,8 @@ There are a couple of improvements I'm consiering adding for futrue versions:
 * Making the commit-checker ignore changes done by the Translation bot (or giving it as an option)
 * Reworking the number of webpages called so the process is faster (There's probably no need to get information about all the commits, and instead just getting it for the latest commit)
 * Possibly adding an option to notify the admin if certain amount of extensions are behind on updates
-
+* Adding an option to check other repositories than Gerrit
+* Checking into using glip (https://github.com/patrikf/glip) for git functionality for users without git installed
 
 Ideas are welcome!
 
