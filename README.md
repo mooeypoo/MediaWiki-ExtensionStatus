@@ -1,6 +1,10 @@
-# Mediawiki Extension: ExtensionStatus
+# Mediawiki Extension: Special:ExtensionStatus
 
-This extension extends the Special:Version page and adds notices about the latest differences between the local version of an installed extension and the latest commits. This should help developers (and general users) get a sense of when an extension should be upgraded.
+This extension creates a special page _Special:ExtensionStatus_ (an extension to Special:Version page) which shows users information about any updates in the extensions they are using. 
+
+The extensions that are checked must have a gerrit repository to be tested-against. The extension will first check local git information to see if there is a 'last update' date, but if git is unavailable, or if the extension was manually downloaded, the code will fall back to checking the file last modification date. 
+
+This isn't entirely accurate, but it can give users (and developers) some idea of whether or not they should upgrade their extensions. This is especailly important for MediaWiki developers, since some bugs that appear may be solved by an extension upgrade (and sometimes those extensions haven't been updated in months) 
 
 ## Note
 
@@ -17,7 +21,11 @@ This extension is installed the usual way:
 ```
 require_once( "$IP/extensions/ExtensionStatus/ExtensionStatus.php" );
 ```
+## Usage
 
+After installation, browse to Special:ExtensionStatus page:
+
+```yourmediawiki.com/Special:ExtensionStatus```
 
 Please report bugs and suggestions in the issues!
 
