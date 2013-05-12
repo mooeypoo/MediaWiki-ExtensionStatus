@@ -34,6 +34,18 @@ http://yourmediawiki.com/Special:ExtensionStatus
 
 Please report bugs and suggestions in the issues!
 
+## Future / "To Do" list
+
+There are a couple of improvements I'm consiering adding for futrue versions:
+
+* Making the commit-checker ignore changes done by the Translation bot (or giving it as an option)
+* Reworking the number of webpages called so the process is faster (There's probably no need to get information about all the commits, and instead just getting it for the latest commit)
+* Possibly adding an option to notify the admin if certain amount of extensions are behind on updates
+
+
+Ideas are welcome!
+
+
 ## Credits
 * Author: Moriel Schottlender (mooeypoo)
 * GNU General Public License http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
