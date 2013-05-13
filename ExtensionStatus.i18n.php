@@ -20,7 +20,7 @@ $messages[ 'en' ] = array(
 		'extstat-msg-lastchange-toomanynotice' =>  "There were [$2 over $1 changes] since you updated this extension.",
 		'extstat-msg-lastchange-details' => "The latest change (<em>$1</em>) was submitted by <em>$2</em> on <em>$3</em>",
 		
-		'extstat-msg-updatebotcommits' => "(Additionally: Behind on $1 updates from Translation Updater Bot)",
+		'extstat-msg-updatebotcommits' => "(Behind on $1 updates from Translation Updater Bot)",
 
 		'extensionstatus-latestcommit' => "Last commit: $1",
 		'extensionstatus-behindcommits' => "You're about $1 behind the latest commit!",
