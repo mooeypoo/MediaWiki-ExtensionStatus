@@ -19,11 +19,11 @@ Here are two screenshots of the extension in action. There are two options: if g
 
 ### With Git
 Notice you can see the SHA1 and latest update date as you do in the Special:Version page:
-![alt text](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus2.png "Special:ExtensionStatus with git installed")
+![Special:ExtensionStatus with git installed](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus2.png "Special:ExtensionStatus with git installed")
 
 ### Without Git
 Here the SHA1 wasn't available, the system fell-back to reading file modification time:
-![alt text](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus1.png "Special:ExtensionStatus without git installed")
+![Special:ExtensionStatus without git installed](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus1.png "Special:ExtensionStatus without git installed")
 
 ## Installation
 
