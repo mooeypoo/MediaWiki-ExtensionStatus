@@ -12,6 +12,18 @@ This isn't entirely accurate, but it can give users (and developers) some idea o
 
 You can also contact me through moo[at]smarterthanthat[dot]com, or on IRC (irc.freenode.net) as _mooeypoo_
 
+## Screenshots
+Here are two screenshots of the extension in action. There are two options: if git is installed, the system will use it to verify local repositories. Otherwise, it will fallback to check local file modification time.
+
+**Note:** The two screenshots below were taken from two different systems that have different updates, which is why the dates and number of lagging commits is different.
+
+### With Git
+Notice you can see the SHA1 and latest update date as you do in the Special:Version page:
+![alt text](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus2.png "Special:ExtensionStatus with git installed")
+
+### Without Git
+Here the SHA1 wasn't available, the system fell-back to reading file modification time:
+![alt text](http://moriel.smarterthanthat.com/wp-content/uploads/2013/05/extstatus1.png "Special:ExtensionStatus without git installed")
 
 ## Installation
 

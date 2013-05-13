@@ -20,7 +20,13 @@ class seCommits {
 	}
 	
 	public function readRemoteURL( $url ) {
-		$output = file_get_contents( $url );
+		try {
+			$output = file_get_contents( $url );
+		} catch (Exception $e) {
+			//if page can't be read or fetched:
+			return false;
+		}
+		
 		$DOM = new DOMDocument;
 		$DOM->loadHTML( $output);
 		
