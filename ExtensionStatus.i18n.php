@@ -14,7 +14,7 @@ $messages[ 'en' ] = array(
         'extensionstatus' => "ExtensionStatus", 
         'extensionstatus-desc' => "Validates existing extensions and checks whether they require update.",
 		
-		'extensionstatus-extendversionlink' => "This page extends the {{Special:Version}} page with information about how far behind remote changes your local extensions are.",
+		'extensionstatus-extendversionlink' => "This page extends the {{Special:Version}} page with information about how far behind remote changes your local extensions are. \n\nCommits from [https://gerrit.wikimedia.org/r/#/q/owner:%22L10n-bot+%253Cl10n-bot%2540translatewiki.net%253E%22,n,z Translation Updater Bot] are counted separately, and appear in green.",
 		
 		'extstat-msg-lastchange-notice' =>  "There are [$2 about $1 new changes] since you updated this extension.",
 		'extstat-msg-lastchange-toomanynotice' =>  "There were [$2 over $1 changes] since you updated this extension.",
