@@ -13,7 +13,7 @@ This isn't entirely accurate, but it can give users (and developers) some idea o
 You can also contact me through moo[at]smarterthanthat[dot]com, or on IRC (irc.freenode.net) as _mooeypoo_
 
 ## Screenshots
-Here are two screenshots of the extension in action. There are two options: if git is installed, the system will use it to verify local repositories. Otherwise, it will fallback to check local file modification time.
+Here are two screenshots of the extension in action. There are two options: if git is installed, the system will use it to verify local repositories. Otherwise, it will fallback to check local file modification time. Notice, also, that since the "ExtensionStatus" entry doesn't have a gerrit account, its commit status is simply empty. 
 
 **Note:** The two screenshots below were taken from two different systems that have different updates, which is why the dates and number of lagging commits is different.
 
