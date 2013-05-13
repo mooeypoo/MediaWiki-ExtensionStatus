@@ -73,6 +73,11 @@ class SpecialExtensionStatus extends SpecialVersion {
 					//display nicely:
 					$extStatText .= "<p class='extstatus-notice'>".$statnotice."</p>";
 					$extStatText .= "<p class='extstatus-commit-info'>".$commitinfo."</p>";
+					
+					//display the translation updates:
+					$extStatText .= "<p class='extstatus-commit-langbot'>".wfMessage( 'extstat-msg-updatebotcommits',
+							$this->comm->getUpdaterBotCommits() )->text()."</p>";
+						
 				}
 			}
 			

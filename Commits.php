@@ -6,10 +6,12 @@ class seCommits {
 	
 	protected $commitCounter;
 	protected $localChangeTime;
+	protected $updaterBotCommits;
 	
 	function __construct() {
 		$this->doc = new DOMDocument;
 		$this->commitCounter = 0;
+		$this->updaterBotCommits = 0;
 	}
 	
 	public function reset() {
@@ -35,34 +37,43 @@ class seCommits {
 		$commits = array();
 		$counter=0;
 		$stop=false;
+		
+		$this->commitCounter = 0;
+		$this->updaterBotCommits = 0;
 
 		foreach($links as $link) {
 
 			$stop = false;
-			if ( $link->nodeValue == 'commit' ) {
+			if ( $link->nodeValue == 'commit') {
 				$commits[$counter]['link'] = "https://gerrit.wikimedia.org" . $link->getAttribute('href');
 				// get info from that commit:
 				$newDom = new DOMDocument;
 				$newDom = $this->readRemoteURL( $commits[$counter]['link'] );
 				
-				$commits[$counter]['date'] = strtotime( $this->domGetPiece($newDom, "date")->nodeValue );
-				
-				// check if the date of the commit is before the local time:
-				if ($compareTime > $commits[$counter]['date'] ) {
-					//no need to continue checking commits after this point
-					$this->commitCounter = $counter + 1;
-					$stop = true;
+				$author = trim($this->domGetPiece($newDom, "author")->nodeValue);
+				if ($author !== "Translation updater bot") { //ignore commits from translator bot
+						
+					$commits[$counter]['author'] = $author;
+					
+					$commits[$counter]['date'] = strtotime( $this->domGetPiece($newDom, "date")->nodeValue );
+					
+					// check if the date of the commit is before the local time:
+					if ($compareTime > $commits[$counter]['date'] ) {
+						//no need to continue checking commits after this point
+						$this->commitCounter = $counter + 1;
+						$stop = true;
+					}
+					
+					$commits[$counter]['header'] = trim($this->domGetPiece($newDom, "header")->childNodes->item(0)->textContent);
+					$counter++;
+				} else {
+					$this->updaterBotCommits++;
 				}
-				
-				$commits[$counter]['header'] = trim($this->domGetPiece($newDom, "header")->childNodes->item(0)->textContent);
-				$commits[$counter]['author'] = trim($this->domGetPiece($newDom, "author")->nodeValue);
-
-				$counter++;
 				if ($counter > 10) { //take only the last 10 commits
 					$this->commitCounter = 999; // set it as above-limit
 					$stop = true;
 				}
-				
+					
 				if ($stop) {
 					break;
 				}
@@ -100,5 +111,9 @@ class seCommits {
 
 	public function setLocalChangeTime( $t ) {
 		$this->localChangeTime = $t;
+	}
+	
+	public function getUpdaterBotCommits() {
+		return $this->updaterBotCommits;
 	}
 }
