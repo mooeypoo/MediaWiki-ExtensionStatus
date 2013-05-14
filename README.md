@@ -29,7 +29,13 @@ Here the SHA1 wasn't available, the system fell-back to reading file modificatio
 
 This extension is installed the usual way:
 
-* Download the [latest version](https://github.com/mooeypoo/MediaWiki-ExtensionStatus/archive/master.zip) into your mediawiki/extensions/ folder, call the new folder "ExtensionStatus".
+* Download the [latest version](https://github.com/mooeypoo/MediaWiki-ExtensionStatus/archive/master.zip) into your mediawiki/extensions/ folder, call the new folder "ExtensionStatus". Or you can use git:
+
+```
+git clone git://github.com/mooeypoo/MediaWiki-ExtensionStatus.git
+```
+
+
 * Add this to your LocalSettings.php
 
 
@@ -41,7 +47,7 @@ require_once( "$IP/extensions/ExtensionStatus/ExtensionStatus.php" );
 After installation, browse to Special:ExtensionStatus page:
 
 ```
-http://yourmediawiki.com/Special:ExtensionStatus
+http://yourmediawiki.com/wiki/Special:ExtensionStatus
 ```
 
 Please report bugs and suggestions in the issues!

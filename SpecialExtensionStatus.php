@@ -2,14 +2,15 @@
 
 class SpecialExtensionStatus extends SpecialVersion {
 	
-	protected $reader = null;
 	protected $dateTimeFormat = "";
 	protected $lastRemoteChange = 0;
 	protected $comm;
+	protected $html;
 	
 	public function __construct() {
 		$this->dateTimeFormat = "F d Y H:i:s.";
 		$this->comm = new SECommits();
+		$this->html = new Html();
 		
 		// Call the SpecialPage constructor
 		SpecialPage::__construct( 'ExtensionStatus' );
@@ -38,56 +39,81 @@ class SpecialExtensionStatus extends SpecialVersion {
 	function getChangeStatus( $extName , $getFromLocalGit = false, $localGitTime = 0 ) {
 		global $wgLang;
 		
+		// This is taking information from gerrit, but will be changed soon to the GitHub mirrors
 		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=log;h=refs/heads/master";
-
 		$extLocalPath = dirname( dirname(  __FILE__ ) ) . "/" . $extName . "/" . $extName . ".php";
 		
 		if ( $getFromLocalGit && $localGitTime > 0 ) {
+			// Local git exists, take local time from there:
 			$localChangeTime = $localGitTime;
 		} else {
 			// Check local file timestamp:
 			$localChangeTime = filemtime( $extLocalPath );
 		}
-		// Check remote last change:
 		$this->comm->setLocalChangeTime( $localChangeTime );
+
+		// Check remote last change:
 		$cDom = $this->comm->readRemoteRepo( $extGitURL );
+
 		$extStatText = "";
+		// If there's a document/reply existent, read it:
 		if ($cDom) {
 			// Get the commit list:
 			$commits = $this->comm->getCommits( $cDom, $localChangeTime );
 			// Prepare the message
-			
 			if ( count( $commits ) > 0 ) {
-				if ( $commits[0]["date"] > $localChangeTime ) {
-					$statnotice = wfMessage( 'extstat-msg-lastchange-notice', $this->comm->getCommitCounter(), $extGitURL )->text();
-
+				if (  $this->comm->getCommitCounter() === 0 ) {
+					// No Commits, check if there are translation commits:
+					if ( $this->comm->getUpdaterBotCommits() === 0 ) {
+						// No translation commits either. Up to date
+						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-upToDate'), 
+							wfMessage( 'extstat-status-uptodate' )
+						);
+					} else {
+						// Only translation commits are available:
+						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-translupdate'), 
+							wfMessage( 'extstat-status-translupdate', $this->comm->getUpdaterBotCommits() )
+						);
+					}
+				} else {
+					// There are general commits:
+					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-updateavailable'), 
+							wfMessage( 'extstat-status-updateavailable' )
+						);
+					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-subtitle-commits'), 
+							wfMessage( 'extstat-subtitle-commits', $this->comm->getCommitCounter() )
+						);
+						
+					// See if there are also language updates:
+					if ( $this->comm->getUpdaterBotCommits() > 0 ) {
+						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-subtitle-language'), 
+								wfMessage( 'extstat-subtitle-language', $this->comm->getUpdaterBotCommits() )
+							);
+					}
+					
+					// Add information about the latest commit:
+					
 					// details of latest commit:
 					$context = new RequestContext();
-					$commitinfo = wfMessage( 'extstat-msg-lastchange-details', $commits[0]['header'], $commits[0]['author'], 
+					$commitinfo = wfMessage( 'extstat-commitinfo-latest', $commits[0]['header'], $commits[0]['author'], 
 							$context->getLanguage()->timeanddate( $commits[0]['date'], true ) )->text();
 
 					//display nicely:
-					$extStatText .= "<p class='extstatus-notice'>".$statnotice."</p>";
-					$extStatText .= "<p class='extstatus-commit-info'>".$commitinfo."</p>";
+					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-commitinfo-latest'), $commitinfo );
 					
-						
-				}
-				//display the translation updates:
-				if ($this->comm->getUpdaterBotCommits() > 0) {
-					$extStatText .= "<p class='extstatus-commit-langbot'>".wfMessage( 'extstat-msg-updatebotcommits',
-						$this->comm->getUpdaterBotCommits() )->text()."</p>";
+					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-commitinfo-link'), 
+							wfMessage( 'extstat-commitinfo-link', $extGitURL )->text()
+						);
 				}
 			}
-			
 		}
 		return $extStatText;
-
 	}
 
 	
 	/**
-	 * This is an original function from SpecialVersion page. It is edited slightly
-	 * to add the version differences notice.
+	 * This is an original function from SpecialVersion page. 
+	 * For the purpose of ExtensionStatus view, this was heavily edited.
 	 * 
 	 * Creates and formats the credits for a single extension and returns this.
 	 *
@@ -102,6 +128,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 	
 		$vcsText = false;
 	
+		// Extension name / URL:
 		if ( isset( $extension['path'] ) ) {
 			$gitInfo = new GitInfo( dirname( $extension['path'] ) );
 			$gitHeadSHA1 = $gitInfo->getHeadSHA1();
@@ -114,7 +141,6 @@ class SpecialExtensionStatus extends SpecialVersion {
 				$gitHeadCommitDate = $gitInfo->getHeadCommitDate();
 				if ( $gitHeadCommitDate ) {
 					$vcsText .= "<br/>" . $wgLang->timeanddate( $gitHeadCommitDate, true );
-					$localTime = $gitHeadCommitDate ;
 				}
 			} else {
 				$svnInfo = self::getSvnInfo( dirname( $extension['path'] ) );
@@ -125,8 +151,8 @@ class SpecialExtensionStatus extends SpecialVersion {
 					$vcsText = isset( $svnInfo['viewvc-url'] ) ? '[' . $svnInfo['viewvc-url'] . " $vcsText]" : $vcsText;
 				}
 			}
-						
 		}
+		
 		
 		/* Adding date/change comparison */
 		if (isset($gitHeadCommitDate)) {
@@ -167,60 +193,41 @@ class SpecialExtensionStatus extends SpecialVersion {
 			}
 		}
 	
-		if ( $vcsText !== false ) {
-			$extNameVer = "<tr>
-			<td><em>$mainLink $versionText</em></td>
-			<td>
-				<em>$vcsText</em>
-				$extStatText
-			</td>";
-			
-		} else {
-			$extNameVer = "<tr>
-			<td><em>$mainLink $versionText</em></td>
-			<td> $extStatText </td>";
-		}
-	
 		$author = isset( $extension['author'] ) ? $extension['author'] : array();
-		$extDescAuthor = "<td>$description</td>
-		<td>" . $this->listAuthors( $author, false ) . "</td></tr>\n";
-	
-		return $extNameVer . $extDescAuthor;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/** 
-	 * Including private function here to preserve
-	 * the inheritance. 
-	 **/
-	 
-	private function openExtType( $text, $name = null ) {
-		$opt = array( 'colspan' => 4 );
-		$out = '';
-	
-		if( $this->firstExtOpened ) {
-			// Insert a spacing line
-			$out .= '<tr class="sv-space">' . Html::element( 'td', $opt ) . "</tr>\n";
+
+		// Set row:
+		$output = "";
+		$output .= $this->html->openElement('tr');
+		
+		$output .= $this->html->rawElement( 'td',  null,
+				$this->html->rawElement('span', array("class"=>"extstat-mainlink"), $mainLink) . " <br />" . 
+					$this->html->rawElement('span', array("class"=>"extstat-versionText"), $versionText)
+			);
+		$output .= $this->html->rawElement( 'td', array("class"=>"extstat-desc"), $description );
+		$output .= $this->html->rawElement( 'td', array("class"=>"extstat-author"), $this->listAuthors( $author, false ) );
+		
+		if ( $vcsText !== false ) {
+			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-updateinfo"), 
+				$this->html->rawElement('span', array("class"=>"extstat-vcstext"), $vcsText) . " " . $extStatText
+			);
+		} else {
+			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-stats"), $extStatText );
 		}
-		$this->firstExtOpened = true;
+
+//		$output .= "<td>$mainLink $versionText</td>";
+//		$output .= "<td>$description</td>";
+//		$output .= "<td>" . $this->listAuthors( $author, false ) . "</td>\n";
+		
+		// If revision is available
+//		if ( $vcsText !== false ) {
+//			$output .= "<td><em>$vcsText</em> $extStatText</td>";
+//		} else {
+//			$output .= "<td>$extStatText</td>";
+//		}
+		$output .= $this->html->closeElement('tr');
 	
-		if( $name ) {
-			$opt['id'] = "sv-$name";
-		}
-	
-		$out .= "<tr>" . Xml::element( 'th', $opt, $text ) . "</tr>\n";
-	
-		return $out;
+//		return $extNameVer . $extDescAuthor;
+		return $output;
 	}
-	
-	
-	
 	
 }

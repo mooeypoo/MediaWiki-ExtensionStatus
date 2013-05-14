@@ -1,4 +1,12 @@
 <?php
+/**
+ * This class is meant to serve as a structure for the
+ * commit information from the extension repos for
+ * ExtensionStatus.
+ * 
+ * @author Moriel Schottlender (mooeypoo)
+ */
+ 
 
 class SECommits {
 	
@@ -36,42 +44,43 @@ class SECommits {
 	}
 	
 	public function getCommits( $dom, $compareTime = 0 ) {
-		
 		$commits 	= array();
 		$authors 	= array();
 		$dates 		= array();
 		$headers 	= array();
-		
-		$xpath = new DOMXPath( $dom );
 
-		// collect commit data:
-		$authors	= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/a' );
-		$dates 		= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/span[@class="datetime"]' );
-		$headers	= $xpath->query( '//div[@class="log_body"]' );
+		if ($dom !== null) {
+			
+			$xpath = new DOMXPath( $dom );
 
-		$this->commitCounter = 0;
-		$this->translationBotCommits = 0;
-		
-		for ($i=0; $i < $authors->length; $i++) {
-			$author = trim($authors->item($i)->nodeValue);
-			$date = strtotime($dates->item($i)->nodeValue);
-			$header = trim($headers->item($i)->nodeValue);
+			// collect commit data:
+			$authors	= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/a' );
+			$dates 		= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/span[@class="datetime"]' );
+			$headers	= $xpath->query( '//div[@class="log_body"]' );
 
-			if ( $author !== "Translation updater bot" ) { //ignore commits from translator bot
-				$commits[$i]['author'] = $author;
-				$commits[$i]['date'] = $date;
-				$commits[$i]['header'] = $header;
-				$this->commitCounter++;
-			} else {
-				$this->translationBotCommits++;
+			$this->commitCounter = 0;
+			$this->translationBotCommits = 0;
+
+			for ($i=0; $i < $authors->length; $i++) {
+				$author = trim($authors->item($i)->nodeValue);
+				$date = strtotime($dates->item($i)->nodeValue);
+				$header = trim($headers->item($i)->nodeValue);
+
+				if ( $author !== "Translation updater bot" ) { //ignore commits from translator bot
+					$commits[$this->commitCounter]['author'] = $author;
+					$commits[$this->commitCounter]['date'] = $date;
+					$commits[$this->commitCounter]['header'] = $header;
+					$this->commitCounter++;
+				} else {
+					$this->translationBotCommits++;
+				}
+
+				// reached the same local date.. stop
+				if ($compareTime > $date) {
+					break;
+				}
 			}
-
-			// reached the same local date.. stop
-			if ($compareTime > $date) {
-				break;
-			}
-		}
-		
+		}	
 
 		return $commits;
 	}
@@ -80,7 +89,7 @@ class SECommits {
 		return $this->commitCounter;
 	}
 
-	public function getLOcalChangeTime() {
+	public function getLocalChangeTime() {
 		return $this->localChangeTime;
 	}
 

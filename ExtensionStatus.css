@@ -11,3 +11,49 @@
 .extstatus-commit-langbot {
 	color: green;
 }
+
+/** Table **/
+.extstat-author, .extstat-desc {
+	font-size: 90%;
+}
+
+/** Update Status **/
+.extstat-update-translupdate, .extstat-update-updateavailable {
+	font-size: 150%;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 0px;
+}
+
+..extstat-update-translupdate {
+	color: #095dbc;
+}
+
+.extstat-update-updateavailable {
+	color: #bc0909;
+}
+
+.extstat-subtitle-commits {
+	text-align: center;
+	color: #bc0909;
+	margin: 0px;
+}
+
+.extstat-subtitle-language {
+	text-align: center;
+	color: #095dbc;
+	margin: 0px;
+}
+
+.extstat-commitinfo-latest {
+	margin-left: 10px;
+	margin-right: 10px;
+	font-size: 80%;
+}
+
+.extstat-commitinfo-link {
+	text-align: center;
+	font-size: 90%;
+}
