@@ -1,12 +1,13 @@
 <?php
 
-class seCommits {
+class SECommits {
 	
 	protected $doc;
+	protected $git;
 	
 	protected $commitCounter;
+	protected $translationBotCommits;
 	protected $localChangeTime;
-	protected $updaterBotCommits;
 	
 	function __construct() {
 		$this->doc = new DOMDocument;
@@ -19,7 +20,8 @@ class seCommits {
 		$this->commitCounter = 0;
 	}
 	
-	public function readRemoteURL( $url ) {
+	public function readRemoteRepo( $url ) {
+		
 		try {
 			$output = file_get_contents( $url );
 		} catch (Exception $e) {
@@ -35,78 +37,45 @@ class seCommits {
 	
 	public function getCommits( $dom, $compareTime = 0 ) {
 		
+		$commits 	= array();
+		$authors 	= array();
+		$dates 		= array();
+		$headers 	= array();
+		
 		$xpath = new DOMXPath( $dom );
 
-		// get the commits links:
-		$links = $xpath->query( '//table[@class="shortlog"]/tr/td[@class="link"]/a' );
-		
-		$commits = array();
-		$counter=0;
-		$stop=false;
-		
+		// collect commit data:
+		$authors	= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/a' );
+		$dates 		= $xpath->query( '//div[@class="title_text"]/span[@class="author_date"]/span[@class="datetime"]' );
+		$headers	= $xpath->query( '//div[@class="log_body"]' );
+
 		$this->commitCounter = 0;
-		$this->updaterBotCommits = 0;
+		$this->translationBotCommits = 0;
+		
+		for ($i=0; $i < $authors->length; $i++) {
+			$author = trim($authors->item($i)->nodeValue);
+			$date = strtotime($dates->item($i)->nodeValue);
+			$header = trim($headers->item($i)->nodeValue);
 
-		foreach($links as $link) {
+			if ( $author !== "Translation updater bot" ) { //ignore commits from translator bot
+				$commits[$i]['author'] = $author;
+				$commits[$i]['date'] = $date;
+				$commits[$i]['header'] = $header;
+				$this->commitCounter++;
+			} else {
+				$this->translationBotCommits++;
+			}
 
-			$stop = false;
-			if ( $link->nodeValue == 'commit') {
-				$commits[$counter]['link'] = "https://gerrit.wikimedia.org" . $link->getAttribute('href');
-				// get info from that commit:
-				$newDom = new DOMDocument;
-				$newDom = $this->readRemoteURL( $commits[$counter]['link'] );
-				
-				$author = trim($this->domGetPiece($newDom, "author")->nodeValue);
-				if ($author !== "Translation updater bot") { //ignore commits from translator bot
-						
-					$commits[$counter]['author'] = $author;
-					
-					$commits[$counter]['date'] = strtotime( $this->domGetPiece($newDom, "date")->nodeValue );
-					
-					// check if the date of the commit is before the local time:
-					if ($compareTime > $commits[$counter]['date'] ) {
-						//no need to continue checking commits after this point
-						$this->commitCounter = $counter + 1;
-						$stop = true;
-					}
-					
-					$commits[$counter]['header'] = trim($this->domGetPiece($newDom, "header")->childNodes->item(0)->textContent);
-					$counter++;
-				} else {
-					$this->updaterBotCommits++;
-				}
-				if ($counter > 10) { //take only the last 10 commits
-					$this->commitCounter = 999; // set it as above-limit
-					$stop = true;
-				}
-					
-				if ($stop) {
-					break;
-				}
+			// reached the same local date.. stop
+			if ($compareTime > $date) {
+				break;
 			}
 		}
+		
+
 		return $commits;
 	}
-	
-	public function domGetPiece( $dom, $piece ) {
-		$newXPath = new DOMXPath( $dom );
-		$query = "";
-		switch( $piece ) {
-			case "date":
-				$query = '//span[@class="datetime"]';
-				break;
-			case "author":
-				$query = '//a[@class="list"]';
-				break;
-			case "header":
-				$query = '//div[@class="header"]/a';
-				break;
-		}
-		$element = $newXPath->query( $query );
 
-		return $element->item(0);
-	}
-	
 	public function getCommitCounter() {
 		return $this->commitCounter;
 	}
@@ -120,6 +89,6 @@ class seCommits {
 	}
 	
 	public function getUpdaterBotCommits() {
-		return $this->updaterBotCommits;
+		return $this->translationBotCommits;
 	}
 }

@@ -21,10 +21,11 @@ $wgExtensionCredits[ 'specialpage' ][] = array(
 $wgResourceModules['ext.ExtensionStatus'] = array(
         'styles' => array('ExtensionStatus.css'),
         'localBasePath' => __DIR__,
+		'remoteExtPath' => 'ExtensionStatus',
 );
 
 
-$wgAutoloadClasses[ 'seCommits' ] = __DIR__ . '/Commits.php'; 
+$wgAutoloadClasses[ 'SECommits' ] = __DIR__ . '/Commits.php'; 
 $wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php'; 
 
 $wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php'; 

@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 
 class SpecialExtensionStatus extends SpecialVersion {
 	
@@ -10,7 +9,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 	
 	public function __construct() {
 		$this->dateTimeFormat = "F d Y H:i:s.";
-		$this->comm = new seCommits();
+		$this->comm = new SECommits();
 		
 		// Call the SpecialPage constructor
 		SpecialPage::__construct( 'ExtensionStatus' );
@@ -39,7 +38,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 	function getChangeStatus( $extName , $getFromLocalGit = false, $localGitTime = 0 ) {
 		global $wgLang;
 		
-		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=shortlog;h=refs/heads/master;hb=master";
+		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=log;h=refs/heads/master";
 
 		$extLocalPath = dirname( dirname(  __FILE__ ) ) . "/" . $extName . "/" . $extName . ".php";
 		
@@ -51,24 +50,21 @@ class SpecialExtensionStatus extends SpecialVersion {
 		}
 		// Check remote last change:
 		$this->comm->setLocalChangeTime( $localChangeTime );
-		$cDom = $this->comm->readRemoteURL( $extGitURL );
+		$cDom = $this->comm->readRemoteRepo( $extGitURL );
 		$extStatText = "";
 		if ($cDom) {
 			// Get the commit list:
 			$commits = $this->comm->getCommits( $cDom, $localChangeTime );
 			// Prepare the message
+			
 			if ( count( $commits ) > 0 ) {
 				if ( $commits[0]["date"] > $localChangeTime ) {
-					if ($this->comm->getCommitCounter() > 10) {
-						$statnotice = wfMessage( 'extstat-msg-lastchange-toomanynotice', 10, $extGitURL )->text();
-					} else {
-						$statnotice = wfMessage( 'extstat-msg-lastchange-notice',
-							$this->comm->getCommitCounter(), $extGitURL )->text();
-					}
+					$statnotice = wfMessage( 'extstat-msg-lastchange-notice', $this->comm->getCommitCounter(), $extGitURL )->text();
 
 					// details of latest commit:
-					$commitinfo = wfMessage( 'extstat-msg-lastchange-details',
-							$commits[0]['header'], $commits[0]['author'], $wgLang->timeanddate( $commits[0]['date'], true ) )->text();
+					$context = new RequestContext();
+					$commitinfo = wfMessage( 'extstat-msg-lastchange-details', $commits[0]['header'], $commits[0]['author'], 
+							$context->getLanguage()->timeanddate( $commits[0]['date'], true ) )->text();
 
 					//display nicely:
 					$extStatText .= "<p class='extstatus-notice'>".$statnotice."</p>";
@@ -77,8 +73,10 @@ class SpecialExtensionStatus extends SpecialVersion {
 						
 				}
 				//display the translation updates:
-				$extStatText .= "<p class='extstatus-commit-langbot'>".wfMessage( 'extstat-msg-updatebotcommits',
+				if ($this->comm->getUpdaterBotCommits() > 0) {
+					$extStatText .= "<p class='extstatus-commit-langbot'>".wfMessage( 'extstat-msg-updatebotcommits',
 						$this->comm->getUpdaterBotCommits() )->text()."</p>";
+				}
 			}
 			
 		}
