@@ -1,17 +1,17 @@
 <?php
 
 class SpecialExtensionStatus extends SpecialVersion {
-	
+
 	protected $dateTimeFormat = "";
 	protected $lastRemoteChange = 0;
 	protected $comm;
 	protected $html;
-	
+
 	public function __construct() {
 		$this->dateTimeFormat = "F d Y H:i:s.";
 		$this->comm = new SECommits();
 		$this->html = new Html();
-		
+
 		// Call the SpecialPage constructor
 		SpecialPage::__construct( 'ExtensionStatus' );
 	}
@@ -27,22 +27,19 @@ class SpecialExtensionStatus extends SpecialVersion {
 		$output->addWikiText( $wikitext );
 	}
 
-	
-	
 	/**
-	 * Get the date and time of the latest commit in the Gerrit repo and compare it to the 
-	 * time and date the local files have been changed. Use this to assume the versions are
-	 * behind and require update.
+	 * Checks the details of the external repository for the extension, looks for
+	 * commits/changes that were done before the update date of the local version.
 	 * 
-	 * @return {int} Time difference between the two versions
+	 * @return {String} Contents of the update cell with update/commit information
 	 */
 	function getChangeStatus( $extName , $getFromLocalGit = false, $localGitTime = 0 ) {
 		global $wgLang;
-		
+
 		// This is taking information from gerrit, but will be changed soon to the GitHub mirrors
 		$extGitURL = "https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/".$extName.".git;a=log;h=refs/heads/master";
 		$extLocalPath = dirname( dirname(  __FILE__ ) ) . "/" . $extName . "/" . $extName . ".php";
-		
+
 		if ( $getFromLocalGit && $localGitTime > 0 ) {
 			// Local git exists, take local time from there:
 			$localChangeTime = $localGitTime;
@@ -66,27 +63,27 @@ class SpecialExtensionStatus extends SpecialVersion {
 					// No Commits, check if there are translation commits:
 					if ( $this->comm->getUpdaterBotCommits() === 0 ) {
 						// No translation commits either. Up to date
-						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-upToDate'), 
+						$extStatText .= $this->html->rawElement('p', array( 'class' => 'extstat-update-upToDate' ),
 							wfMessage( 'extstat-status-uptodate' )
 						);
 					} else {
 						// Only translation commits are available:
-						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-translupdate'), 
+						$extStatText .= $this->html->rawElement('p', array( 'class' => 'extstat-update-translupdate' ),
 							wfMessage( 'extstat-status-translupdate', $this->comm->getUpdaterBotCommits() )
 						);
 					}
 				} else {
 					// There are general commits:
-					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-update-updateavailable'), 
+					$extStatText .= $this->html->rawElement('p', array( 'class' => 'extstat-update-updateavailable' ),
 							wfMessage( 'extstat-status-updateavailable' )
 						);
-					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-subtitle-commits'), 
+					$extStatText .= $this->html->rawElement('p', array( 'class' => 'extstat-subtitle-commits' ),
 							wfMessage( 'extstat-subtitle-commits', $this->comm->getCommitCounter() )
 						);
 						
 					// See if there are also language updates:
 					if ( $this->comm->getUpdaterBotCommits() > 0 ) {
-						$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-subtitle-language'), 
+						$extStatText .= $this->html->rawElement('p', array( 'class' => 'extstat-subtitle-language' ), 
 								wfMessage( 'extstat-subtitle-language', $this->comm->getUpdaterBotCommits() )
 							);
 					}
@@ -95,13 +92,13 @@ class SpecialExtensionStatus extends SpecialVersion {
 					
 					// details of latest commit:
 					$context = new RequestContext();
-					$commitinfo = wfMessage( 'extstat-commitinfo-latest', $commits[0]['header'], $commits[0]['author'], 
+					$commitinfo = wfMessage( 'extstat-commitinfo-latest', $commits[0]['header'], $commits[0]['author'],
 							$context->getLanguage()->timeanddate( $commits[0]['date'], true ) )->text();
 
 					//display nicely:
 					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-commitinfo-latest'), $commitinfo );
-					
-					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-commitinfo-link'), 
+
+					$extStatText .= $this->html->rawElement('p', array('class' => 'extstat-commitinfo-link'),
 							wfMessage( 'extstat-commitinfo-link', $extGitURL )->text()
 						);
 				}
@@ -110,11 +107,11 @@ class SpecialExtensionStatus extends SpecialVersion {
 		return $extStatText;
 	}
 
-	
+
 	/**
 	 * This is an original function from SpecialVersion page. 
 	 * For the purpose of ExtensionStatus view, this was heavily edited.
-	 * 
+	 *
 	 * Creates and formats the credits for a single extension and returns this.
 	 *
 	 * @param $extension Array
@@ -152,15 +149,14 @@ class SpecialExtensionStatus extends SpecialVersion {
 				}
 			}
 		}
-		
-		
+
 		/* Adding date/change comparison */
 		if (isset($gitHeadCommitDate)) {
 			$extStatText = $this->getChangeStatus( $name, true, $gitHeadCommitDate );
 		} else {
 			$extStatText = $this->getChangeStatus( $name, false );
 		}
-		
+
 		# Make main link (or just the name if there is no URL).
 		if ( isset( $extension['url'] ) ) {
 			$mainLink = "[{$extension['url']} $name]";
@@ -198,35 +194,24 @@ class SpecialExtensionStatus extends SpecialVersion {
 		// Set row:
 		$output = "";
 		$output .= $this->html->openElement('tr');
-		
+
 		$output .= $this->html->rawElement( 'td',  null,
-				$this->html->rawElement('span', array("class"=>"extstat-mainlink"), $mainLink) . " <br />" . 
-					$this->html->rawElement('span', array("class"=>"extstat-versionText"), $versionText)
+				$this->html->rawElement('span', array( "class" => "extstat-mainlink" ), $mainLink ) . " <br />" .
+					$this->html->rawElement('span', array( "class" => "extstat-versionText" ), $versionText )
 			);
-		$output .= $this->html->rawElement( 'td', array("class"=>"extstat-desc"), $description );
-		$output .= $this->html->rawElement( 'td', array("class"=>"extstat-author"), $this->listAuthors( $author, false ) );
-		
+		$output .= $this->html->rawElement( 'td', array("class" => "extstat-desc" ), $description );
+		$output .= $this->html->rawElement( 'td', array("class" => "extstat-author" ), $this->listAuthors( $author, false ) );
+
 		if ( $vcsText !== false ) {
-			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-updateinfo"), 
-				$this->html->rawElement('span', array("class"=>"extstat-vcstext"), $vcsText) . " " . $extStatText
+			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-updateinfo" ),
+				$this->html->rawElement( 'span', array("class"=>"extstat-vcstext"), $vcsText ) . " " . $extStatText
 			);
 		} else {
 			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-stats"), $extStatText );
 		}
 
-//		$output .= "<td>$mainLink $versionText</td>";
-//		$output .= "<td>$description</td>";
-//		$output .= "<td>" . $this->listAuthors( $author, false ) . "</td>\n";
-		
-		// If revision is available
-//		if ( $vcsText !== false ) {
-//			$output .= "<td><em>$vcsText</em> $extStatText</td>";
-//		} else {
-//			$output .= "<td>$extStatText</td>";
-//		}
-		$output .= $this->html->closeElement('tr');
-	
-//		return $extNameVer . $extDescAuthor;
+		$output .= $this->html->closeElement( 'tr' );
+
 		return $output;
 	}
 	

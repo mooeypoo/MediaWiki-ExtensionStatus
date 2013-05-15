@@ -8,7 +8,7 @@ EOT;
         exit( 1 );
 }
  
-$wgHooks['BeforePageDisplay'][] = 'wfExtensionStatusBeforePageDisplay';
+$wgHooks[ 'BeforePageDisplay' ][] = 'wfExtensionStatusBeforePageDisplay';
 
 $wgExtensionCredits[ 'specialpage' ][] = array(
         'path' => __FILE__,
@@ -26,11 +26,11 @@ $wgResourceModules['ext.ExtensionStatus'] = array(
 
 
 $wgAutoloadClasses[ 'SECommits' ] = __DIR__ . '/Commits.php'; 
-$wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php'; 
+$wgAutoloadClasses[ 'SpecialExtensionStatus' ] = __DIR__ . '/SpecialExtensionStatus.php';
 
-$wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php'; 
-$wgExtensionMessagesFiles[ 'ExtensionStatusAlias' ] = __DIR__ . '/ExtensionStatus.alias.php'; 
-$wgSpecialPages[ 'ExtensionStatus' ] = 'SpecialExtensionStatus'; 
+$wgExtensionMessagesFiles[ 'ExtensionStatus' ] = __DIR__ . '/ExtensionStatus.i18n.php';
+$wgExtensionMessagesFiles[ 'ExtensionStatusAlias' ] = __DIR__ . '/ExtensionStatus.alias.php';
+$wgSpecialPages[ 'ExtensionStatus' ] = 'SpecialExtensionStatus';
 
 /**
  * @param $out OutputPage

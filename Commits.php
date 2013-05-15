@@ -80,7 +80,7 @@ class SECommits {
 					break;
 				}
 			}
-		}	
+		}
 
 		return $commits;
 	}
@@ -96,7 +96,7 @@ class SECommits {
 	public function setLocalChangeTime( $t ) {
 		$this->localChangeTime = $t;
 	}
-	
+
 	public function getUpdaterBotCommits() {
 		return $this->translationBotCommits;
 	}
