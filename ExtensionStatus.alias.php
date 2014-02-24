@@ -14,3 +14,4 @@ $specialPageAliases = array();
 $specialPageAliases[ 'en' ] = array(
 		'ExtensionStatus' => array( 'ExtensionStatus', 'Extension Status' ),
 );
+
