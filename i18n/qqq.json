@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Moriel Schottlender"
+		]
+	},
+	"extensionstatus-desc": "{{desc|name=ExtensionStatus|url=http://www.mediawiki.org/wiki/Extension:ExtensionStatus}}",
+	"extensionstatus-extendversionlink": "The introduction section in the Special page.",
+	"extstat-status-uptodate": "'Up to Date' extension upgrade status, appears when no new commits were found",
+	"extstat-status-translupdate": "'Translation Update' extension upgrade status, appears when there are commits done by the Translation Updater Bot",
+	"extstat-status-updateavailable": "'Update Available' extension upgrade status, appears when there are changes/commits done to the code other than by the Translation Updater Bot",
+	"extstat-subtitle-commits": "States the number of new available commits. Parameters: $1: How many new updates/commits are available in the remote repository",
+	"extstat-subtitle-language": "States the number of new available commits done by the Translation Updater Bot. Parameters: $1: How many new updates/commits are available in the remote repository specifically from the Translation Updater Bot",
+	"extstat-commitinfo-latest": "Displays specific information about the latest change (disregards ones from Translation Updater Bot). Parameters: $1: The head of the latest commit, $2: The author of the latest commit, $3: The date of the latest commit",
+	"extstat-commitinfo-link": "Link to the extension's repository. Parameters: $1: Repository URL"
+}
