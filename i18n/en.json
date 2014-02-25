@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Moriel Schottlender"
+		]
+	},
+	"extensionstatus": "ExtensionStatus",
+	"extensionstatus-desc": "Validates existing extensions and checks whether they require update.",
+	"extensionstatus-extendversionlink": "This page extends the [[Special:Version]] page with information about how far behind remote changes your local extensions are. \n\nCommits from [https://gerrit.wikimedia.org/r/#/q/owner:%22L10n-bot+%253Cl10n-bot%2540translatewiki.net%253E%22,n,z Translation Updater Bot] are counted separately.",
+	"extstat-status-uptodate": "Up to Date",
+	"extstat-status-translupdate": "Translation Update",
+	"extstat-status-updateavailable": "Update Available",
+	"extstat-subtitle-commits": "About $1 Changes Behind",
+	"extstat-subtitle-language": "$1 Translation Bot Updates",
+	"extstat-commitinfo-latest": "The latest change (<em>$1</em>) was submitted by <em>$2</em> on <em>$3</em>",
+	"extstat-commitinfo-link": "[$1 Go to Repository]"
+}
