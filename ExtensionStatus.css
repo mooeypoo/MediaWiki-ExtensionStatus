@@ -1,4 +1,3 @@
-
 .extstatus-notice {
 	font-weight: bold;
 	color: red;
@@ -24,10 +23,10 @@
 	text-align: center;
 	margin-top: 2px;
 	margin-bottom: 2px;
-	border: 0px;
+	border: 0;
 }
 
-..extstat-update-translupdate {
+.extstat-update-translupdate {
 	color: #095dbc;
 }
 
@@ -38,13 +37,13 @@
 .extstat-subtitle-commits {
 	text-align: center;
 	color: #bc0909;
-	margin: 0px;
+	margin: 0;
 }
 
 .extstat-subtitle-language {
 	text-align: center;
 	color: #095dbc;
-	margin: 0px;
+	margin: 0;
 }
 
 .extstat-commitinfo-latest {
