@@ -200,7 +200,7 @@ class SpecialExtensionStatus extends SpecialVersion {
 					$this->html->rawElement('span', array( "class" => "extstat-versionText" ), $versionText )
 			);
 		$output .= $this->html->rawElement( 'td', array("class" => "extstat-desc" ), $description );
-		$output .= $this->html->rawElement( 'td', array("class" => "extstat-author" ), $this->listAuthors( $author, false ) );
+		$output .= $this->html->rawElement( 'td', array("class" => "extstat-author" ), $this->listAuthors( $authors, $extName, $extDir, false ) );
 
 		if ( $vcsText !== false ) {
 			$output .= $this->html->rawElement( 'td', array("class"=>"extstat-updateinfo" ),
